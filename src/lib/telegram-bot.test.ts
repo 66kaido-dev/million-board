@@ -18,14 +18,14 @@ describe("Telegram bot integration", () => {
       });
   });
 
-  test("uses a Telegram Mini App deep link in groups", () => {
+  test("uses the Telegram Web App link in groups", () => {
     expect(buildMiniAppReplyMarkup("supergroup", "https://million-board.vercel.app"))
       .toEqual({
         inline_keyboard: [
           [
             {
               text: "scoreboard",
-              url: "https://t.me/SCOREBOARDFORUNICORNMAKERSBOT?startapp=scoreboard",
+              url: "https://t.me/SCOREBOARDFORUNICORNMAKERSBOT/SCOREBOARD",
             },
           ],
         ],

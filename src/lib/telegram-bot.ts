@@ -5,7 +5,7 @@ type TelegramReplyMarkup = {
 };
 
 const TELEGRAM_BOT_USERNAME = "SCOREBOARDFORUNICORNMAKERSBOT";
-const MINI_APP_START_PARAM = "scoreboard";
+const MINI_APP_SHORT_NAME = "SCOREBOARD";
 
 type TelegramChatType = "private" | "group" | "supergroup" | "channel" | string;
 
@@ -57,7 +57,7 @@ export function buildMiniAppReplyMarkup(
   chatType: TelegramChatType | undefined,
   appUrl: string,
 ): TelegramReplyMarkup {
-  const miniAppDeepLink = `https://t.me/${TELEGRAM_BOT_USERNAME}?startapp=${MINI_APP_START_PARAM}`;
+  const groupMiniAppUrl = `https://t.me/${TELEGRAM_BOT_USERNAME}/${MINI_APP_SHORT_NAME}`;
   const button =
     chatType === "private"
       ? {
@@ -68,7 +68,7 @@ export function buildMiniAppReplyMarkup(
         }
       : {
           text: "scoreboard",
-          url: miniAppDeepLink,
+          url: groupMiniAppUrl,
         };
 
   return {

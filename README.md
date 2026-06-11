@@ -142,7 +142,11 @@ The bot replies with:
 Million Board
 ```
 
-In private bot chats, the `scoreboard` button is sent as a Telegram `web_app` button. In group chats, Telegram Bot API does not support `web_app` inline buttons, so the bot sends the same `scoreboard` button as a normal URL button to `APP_URL`.
+In private bot chats, the `scoreboard` button is sent as a Telegram `web_app` button. In group chats, Telegram Bot API does not support `web_app` inline buttons, so the bot sends the same `scoreboard` button as a normal URL button to the BotFather Web App link:
+
+```text
+https://t.me/SCOREBOARDFORUNICORNMAKERSBOT/SCOREBOARD
+```
 
 ## BotFather Mini App / Menu Button
 
@@ -154,7 +158,7 @@ In private bot chats, the `scoreboard` button is sent as a Telegram `web_app` bu
 6. Choose `Configure menu button`.
 7. Text: `scoreboard`.
 8. URL: your Vercel `APP_URL`.
-9. If BotFather shows a Mini App / Web App URL setting, use the same Vercel `APP_URL`.
+9. Create or edit the bot Web App in BotFather with URL `https://million-board.vercel.app` and short name `SCOREBOARD`.
 10. Add the bot to the private partners chat.
 11. Send `/start` or `scoreboard` so the bot sends the Mini App open button.
 
