@@ -42,6 +42,7 @@ The Mini App expects Telegram `initData`, so full auth testing should be done in
 
 ```bash
 BOT_TOKEN=
+TELEGRAM_WEBHOOK_SECRET=
 TELEGRAM_CHAT_ID=
 ALLOWED_TELEGRAM_IDS=655435297,8477263540,1671095454
 SUPABASE_URL=
@@ -83,6 +84,8 @@ RLS is enabled and no public policies are created. The frontend talks only to Ne
 
 All `/api/entries` routes validate Telegram WebApp `initData` and the allowlist.
 
+The Telegram webhook route accepts `POST /api/telegram/webhook`. If `TELEGRAM_WEBHOOK_SECRET` is set, the route requires Telegram's `X-Telegram-Bot-Api-Secret-Token` header to match it.
+
 ## Vercel Deploy
 
 Free path:
@@ -112,11 +115,34 @@ After production deploy and after setting `APP_URL`, configure the bot webhook:
 
 ```bash
 curl -X POST "https://api.telegram.org/bot$BOT_TOKEN/setWebhook" \
-  -d "url=$APP_URL/api/telegram/webhook" \
-  -d "drop_pending_updates=true"
+  -H "content-type: application/json" \
+  -d '{
+    "url": "https://million-board.vercel.app/api/telegram/webhook",
+    "drop_pending_updates": true,
+    "allowed_updates": ["message"],
+    "secret_token": "'"$TELEGRAM_WEBHOOK_SECRET"'"
+  }'
 ```
 
-Add the bot to the private group and send `/start` or `scoreboard`. The bot will reply with the Mini App button.
+Check webhook status:
+
+```bash
+curl "https://api.telegram.org/bot$BOT_TOKEN/getWebhookInfo"
+```
+
+Add the bot to the private group and send:
+
+```text
+/start@SCOREBOARDFORUNICORNMAKERSBOT
+```
+
+The bot replies with:
+
+```text
+Million Board
+```
+
+In private bot chats, the `scoreboard` button is sent as a Telegram `web_app` button. In group chats, Telegram Bot API does not support `web_app` inline buttons, so the bot sends the same `scoreboard` button as a normal URL button to `APP_URL`.
 
 ## BotFather Mini App / Menu Button
 

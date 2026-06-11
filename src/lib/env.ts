@@ -52,3 +52,7 @@ export function getDailyReportSecrets() {
     getOptionalEnv("CRON_SECRET"),
   ].filter(Boolean) as string[];
 }
+
+export function getTelegramWebhookSecret() {
+  return getOptionalEnv("TELEGRAM_WEBHOOK_SECRET");
+}

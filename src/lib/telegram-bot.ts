@@ -4,10 +4,13 @@ type TelegramReplyMarkup = {
   inline_keyboard: Array<Array<Record<string, unknown>>>;
 };
 
+type TelegramChatType = "private" | "group" | "supergroup" | "channel" | string;
+
 type TelegramUpdate = {
   message?: {
     chat: {
       id: number | string;
+      type?: TelegramChatType;
     };
     text?: string;
   };
@@ -42,25 +45,56 @@ export async function sendTelegramMessage(
   return callTelegramApi("sendMessage", {
     chat_id: chatId,
     disable_web_page_preview: true,
-    parse_mode: "HTML",
     reply_markup: replyMarkup,
     text,
   });
 }
 
-export async function sendMiniAppButton(chatId: string | number) {
-  return sendTelegramMessage(chatId, "Million Board", {
-    inline_keyboard: [
-      [
-        {
+export function buildMiniAppReplyMarkup(
+  chatType: TelegramChatType | undefined,
+  appUrl: string,
+): TelegramReplyMarkup {
+  const button =
+    chatType === "private"
+      ? {
           text: "scoreboard",
           web_app: {
-            url: getAppUrl(),
+            url: appUrl,
           },
-        },
+        }
+      : {
+          text: "scoreboard",
+          url: appUrl,
+        };
+
+  return {
+    inline_keyboard: [
+      [
+        button,
       ],
     ],
-  });
+  };
+}
+
+export function shouldSendMiniAppButton(text?: string) {
+  const normalizedText = text?.trim().toLowerCase();
+
+  return (
+    !normalizedText ||
+    normalizedText.startsWith("/start") ||
+    normalizedText.includes("scoreboard")
+  );
+}
+
+export async function sendMiniAppButton(
+  chatId: string | number,
+  chatType?: TelegramChatType,
+) {
+  return sendTelegramMessage(
+    chatId,
+    "Million Board",
+    buildMiniAppReplyMarkup(chatType, getAppUrl()),
+  );
 }
 
 export async function sendBoardChatMessage(text: string) {
@@ -68,15 +102,16 @@ export async function sendBoardChatMessage(text: string) {
 }
 
 export async function handleTelegramWebhook(update: TelegramUpdate) {
-  const chatId = update.message?.chat.id;
-  const text = update.message?.text?.trim().toLowerCase();
+  const chat = update.message?.chat;
+  const chatId = chat?.id;
+  const text = update.message?.text;
 
   if (!chatId) {
     return { handled: false };
   }
 
-  if (!text || text.startsWith("/start") || text.includes("scoreboard")) {
-    await sendMiniAppButton(chatId);
+  if (shouldSendMiniAppButton(text)) {
+    await sendMiniAppButton(chatId, chat.type);
     return { handled: true };
   }
 
