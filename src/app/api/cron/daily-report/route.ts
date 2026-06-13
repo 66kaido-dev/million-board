@@ -45,6 +45,10 @@ async function handler(request: Request) {
     }
 
     const message = buildDailyReportMessage((data ?? []) as Entry[], today);
+    if (!message) {
+      return Response.json({ ok: true, date: today, skipped: true });
+    }
+
     await sendBoardChatMessage(message);
 
     return Response.json({ ok: true, date: today });

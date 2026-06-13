@@ -91,6 +91,10 @@ export function buildDailyReportMessage(entries: Entry[], date: string) {
   const summaries = createParticipantSummaries(dailyEntries);
   const total = dailyEntries.reduce((sum, entry) => sum + entry.amount, 0);
 
+  if (total <= 0) {
+    return null;
+  }
+
   return [
     "Итог дня — Million Board",
     "",

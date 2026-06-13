@@ -119,4 +119,19 @@ describe("money domain logic", () => {
       "Итог дня — Million Board\n\nВладимир: 50 000 ₽\nАлан: 0 ₽\nВладислав: 25 000 ₽\n\nВсего за день: 75 000 ₽",
     );
   });
+
+  test("does not build a daily report when nobody earned money that day", () => {
+    const entries: Entry[] = [
+      {
+        ...baseEntry,
+        id: "entry-1",
+        participant_id: "8477263540",
+        participant_name: "Владимир",
+        amount: 50_000,
+        entry_date: "2026-06-10",
+      },
+    ];
+
+    expect(buildDailyReportMessage(entries, "2026-06-11")).toBeNull();
+  });
 });
